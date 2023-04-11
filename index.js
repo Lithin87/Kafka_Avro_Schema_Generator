@@ -18,46 +18,51 @@ const kafka = new Kafka({
 })
 
 const topic = 'topic_vehicles'
-const consumer = kafka.consumer({ groupId: 'test-group' })
+const partitions = [...Array(6).keys()]
+const offset = 0
+
+const consumer = kafka.consumer({ groupId: 'test-group1' })
 
 const run = async () => {
-  await consumer.subscribe({ topic, fromBeginning: true })
   await consumer.connect()
+  await consumer.subscribe({ topic, fromBeginning: true })
   await consumer.run({
     // eachBatch: async ({ batch }) => {
-    //   console.log(batch)
-    // },
-    eachMessage: async ({ topic, partition, message }) => {
-      const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`
-      console.log(`- ${prefix} ${message.key}#${message.value}`)
-    },
-  })
+      //   console.log(batch)
+      // },
+      eachMessage: async ({ topic, partition, message }) => {
+        const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`
+        console.log(`- ${prefix} ${message.key}#${message.value}`)
+      },
+    })
+
+    partitions.forEach( p => { consumer.seek({ topic, partition : p, offset }) })
 }
 
 run().catch(e => console.error(` ${e.message}`, e))
 
-// const errorTypes = ['unhandledRejection', 'uncaughtException']
-// const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
+const errorTypes = ['unhandledRejection', 'uncaughtException']
+const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
 
-// errorTypes.forEach(type => {
-//   process.on(type, async e => {
-//     try {
-//       console.log(`process.on ${type}`)
-//       console.error(e)
-//       await consumer.disconnect()
-//       process.exit(0)
-//     } catch (_) {
-//       process.exit(1)
-//     }
-//   })
-// })
+errorTypes.forEach(type => {
+  process.on(type, async e => {
+    try {
+      console.log(`process.on ${type}`)
+      console.error(e)
+      await consumer.disconnect()
+      process.exit(0)
+    } catch (_) {
+      process.exit(1)
+    }
+  })
+})
 
-// signalTraps.forEach(type => {
-//   process.once(type, async () => {
-//     try {
-//       await consumer.disconnect()
-//     } finally {
-//       process.kill(process.pid, type)
-//     }
-//   })
-// })
+signalTraps.forEach(type => {
+  process.once(type, async () => {
+    try {
+      await consumer.disconnect()
+    } finally {
+      process.kill(process.pid, type)
+    }
+  })
+})
