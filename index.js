@@ -1,19 +1,63 @@
-const fs = require('fs');
+const ip = require('ip')
+const { Kafka, logLevel } = require('kafkajs')
 
-function readConfigFile(fileName) {
-    const data = fs.readFileSync(fileName, 'utf8').toString().split("\n");
-    return data.reduce((config, line) => {
-        const [key, value] = line.split("=");
-        if (key && value) {
-            config[key] = value;
-        }
-        return config;
-    }, {})
+const host = "pkc-3w22w.us-central1.gcp.confluent.cloud";
+
+const kafka = new Kafka({
+  logLevel: logLevel.INFO,
+  brokers: [`${host}:9092`],
+  clientId: 'Lconsumer',
+  ssl: {
+    rejectUnauthorized: true
+  },
+  sasl: {
+    mechanism: 'plain',
+    username: 'LBQI5FO4NTSQKS4Y',
+    password: 'XxWYNcND/JEIUWIWEjv7B5jnPU0fIs/hBUPi0N19VLe7C2ulql7Oo3HWxaw6ziBY',
+  },
+})
+
+const topic = 'topic_vehicles'
+const consumer = kafka.consumer({ groupId: 'test-group' })
+
+const run = async () => {
+  await consumer.subscribe({ topic, fromBeginning: true })
+  await consumer.connect()
+  await consumer.run({
+    // eachBatch: async ({ batch }) => {
+    //   console.log(batch)
+    // },
+    eachMessage: async ({ topic, partition, message }) => {
+      const prefix = `${topic}[${partition} | ${message.offset}] / ${message.timestamp}`
+      console.log(`- ${prefix} ${message.key}#${message.value}`)
+    },
+  })
 }
 
-const Kafka = require("node-rdkafka");
-const producer = new Kafka.Producer(readConfigFile("client.properties"));
-producer.connect();
-producer.on("ready", () => {
-    producer.produce("my-topic", -1, Buffer.from("value"), Buffer.from("key"));
-});
+run().catch(e => console.error(` ${e.message}`, e))
+
+// const errorTypes = ['unhandledRejection', 'uncaughtException']
+// const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
+
+// errorTypes.forEach(type => {
+//   process.on(type, async e => {
+//     try {
+//       console.log(`process.on ${type}`)
+//       console.error(e)
+//       await consumer.disconnect()
+//       process.exit(0)
+//     } catch (_) {
+//       process.exit(1)
+//     }
+//   })
+// })
+
+// signalTraps.forEach(type => {
+//   process.once(type, async () => {
+//     try {
+//       await consumer.disconnect()
+//     } finally {
+//       process.kill(process.pid, type)
+//     }
+//   })
+// })
