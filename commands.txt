@@ -1,0 +1,5 @@
+confluent connect cluster create --config-file datagen-source-config.json
+
+confluent connect cluster list
+
+confluent connect plugin describe DatagenSource -o json
