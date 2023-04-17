@@ -3,3 +3,16 @@ confluent connect cluster create --config-file datagen-source-config.json
 confluent connect cluster list
 
 confluent connect plugin describe DatagenSource -o json
+
+confluent kafka topic delete transactions
+
+confluent connect delete <connector ID>
+
+confluent connect describe <connector ID>
+
+confluent connect resume <connector ID>
+
+confluent connect pause <connector ID>
+
+
+
