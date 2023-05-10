@@ -14,7 +14,7 @@ confluent connect resume <connector ID>
 
 confluent connect pause <connector ID>
 
-
+=================================================================================
 
 1 {
   2     'Orientation Sensor':
@@ -48,7 +48,7 @@ confluent connect pause <connector ID>
  30     ]
  31 }
 
-
+===============================================================================
  var o = {} // empty Object
 var key = 'Orientation Sensor';
 o[key] = []; // empty Array, which you can push() values into
@@ -65,13 +65,13 @@ var data2 = {
 o[key].push(data);
 o[key].push(data2);
 
-
+=========================================================
 
 myObj = new Object()
 myObj.key = value;
 myObj[key2] = value2;   // Alternative
 
-
+======================================================================
 
 
 var result = [];
@@ -81,4 +81,4 @@ for (var name in goals) {
   }
 }
 
-
+================================================================
