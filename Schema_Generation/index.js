@@ -8,76 +8,41 @@ const file = "Schema-Files/pizza-order.json";
 jsonfile.readFile(file).then( jsonObject => 
     {
         let inferredType = avsc.Type.forValue(jsonObject); // Infer the type 
-        var schema = inferredType.schema();
-        var schema_c = {...schema};
+        var original_schema = inferredType.schema();
+        var custom_schema = {...original_schema};
 
-        console.dir(schema_c, { depth: null });
+        console.dir(original_schema, { depth: null });
 
         // var extracted = jp.query(schema, '$.fields[*].type')
-        // console.dir(extracted, { depth: null });
         console.log("-------------------------")
         
-        console.log(regex_types);
-
         const  func_replace = e => { 
          
-            if(['int','string','float'].includes(e.type))
-            {
-            e.type  = { 
-            "type": "int",
-            "arg.properties": {
-                "range": {
-                    "min": 1,
-                    "max": 10
-                }
-            }
-        }  
-            }else{
-                if(e.type.items.type === "record" )
+          switch (e.type) {
+            case 'int':
+              e.type  = regex_types.int_date_18000_19000;
+              break;
+            case 'string':
+              e.type  = regex_types.string_regex_user_1_10;
+              break;
+            case 'float':
+              e.type  = regex_types.int_range_10000_200000;
+              break;
+            default:
+              if(e.type.items.type === "record" )
                 {
-                    // console.log("found a nexted array")
-                    let n = e.type.items.fields;
-                    let b = JSON.parse(JSON.stringify(n))
+                    let b = JSON.parse(JSON.stringify(e.type.items.fields))    //  nexted fields
                     b.forEach(func_replace);
                     e.type.items.fields = b;
                 }
-            }
+          }
         }
         
-        
-        
-        var a = schema_c.fields;
-        let b = JSON.parse(JSON.stringify(a))
-        b.forEach(func_replace);
+      let custom_regex_fields =  JSON.parse(JSON.stringify(custom_schema.fields))
+      custom_regex_fields.forEach(func_replace);
+      custom_schema.fields = custom_regex_fields;
 
-
-
-        schema_c.fields = b;
-
-
-
-        console.dir(schema_c,  { depth: null });
-        // console.dir(mod_schema,  { depth: null });
-
-        // JSONObject songs= json.getJSONObject("songs");
-        // Iterator x = songs.keys();
-
-
-
-        // schema_c.fields[0].type = { 
-        //     "type": "int",
-        //     "arg.properties": {
-        //         "range": {
-        //             "min": 1,
-        //             "max": 10
-        //         }
-        //     }
-        // };
-
-
-        // console.dir(schema_c,{ depth: null })
-
-
+      console.dir(custom_schema,  { depth: null });
     }
     ).catch(e => console.error("Error"+e))
 
