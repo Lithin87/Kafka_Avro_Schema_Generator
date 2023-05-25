@@ -7,14 +7,16 @@ import regex_types from './custom_regex.js';
 
 export default function generate(a) {
     
-let result="";
+let result="xx";
 
 const file = a || "Schema-Files/pizza-order.json";
 
 
-jsonfile.readFile(file).then( jsonObject => 
-    {
-        let inferredType = avsc.Type.forValue(jsonObject); // Infer the type 
+const filecontent = jsonfile.readFileSync(file);
+
+
+    
+        let inferredType = avsc.Type.forValue(filecontent); // Infer the type 
         var original_schema = inferredType.schema();
         var custom_schema = {...original_schema};
 
@@ -51,20 +53,21 @@ jsonfile.readFile(file).then( jsonObject =>
           }
         }
         console.log("--1"+result)
-
-      let custom_regex_fields =  JSON.parse(JSON.stringify(custom_schema.fields))
-      custom_regex_fields.forEach(func_replace);
-      custom_schema.fields = custom_regex_fields;
-
+        
+        let custom_regex_fields =  JSON.parse(JSON.stringify(custom_schema.fields))
+        custom_regex_fields.forEach(func_replace);
+        custom_schema.fields = custom_regex_fields;
+        
+        console.log("--12"+custom_schema)
       
       result = custom_schema;
-
-      console.log("--2-"+result)
       return custom_schema;
 
+      console.log("--2-"+result)
+
     //   console.dir(custom_schema,  { depth: null });
-    }
-    ).catch(e =>  {result = custom_schema});
+    
+  
 
     console.log("--3"+result)
 
