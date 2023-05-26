@@ -4,7 +4,7 @@ import regex_types from './custom_regex.js';
 
 export default function generate(json_payload) {
 
-  console.log("TYPE"+ typeof(JSON.stringify(json_payload)));
+  console.log("TYPE"+ JSON.stringify(json_payload));
   console.log("TYPE"+ json_payload);
 
 
