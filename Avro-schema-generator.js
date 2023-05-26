@@ -4,7 +4,12 @@ import regex_types from './custom_regex.js';
 
 export default function generate(json_payload) {
 
+  console.log("TYPE"+ typeof(json_payload));
+  
   const json_message = json_payload.isEmpty() ? jsonfile.readFileSync("Schema-Files/pizza-order.json") : json_payload;
+  
+  // const json_message =  jsonfile.readFileSync("Schema-Files/pizza-order.json");
+  
 
   let original_schema = avsc.Type.forValue(json_message).schema(); 
   var custom_schema = { ...original_schema };
@@ -43,4 +48,5 @@ export default function generate(json_payload) {
   custom_schema.fields = custom_regex_fields;
 
   return custom_schema;
+
 }
