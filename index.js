@@ -1,14 +1,12 @@
 import  express from 'express';
 import generate from './Avro-schema-generator.js' 
+import bodyParser from 'body-parser';
 
 const app = express();
+app.use(bodyParser.json());
 
-app.post('/', (req, res) => {
-  
-  const name = req.body;
-  const ret  = generate(name);
-  console.log("--33"+ret)
-  res.send(ret);
+app.post('/', (req, res) => { 
+  res.send(generate(req.body));
 });
 
 
