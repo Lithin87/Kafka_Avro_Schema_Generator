@@ -5,9 +5,9 @@ import regex_types from './custom_regex.js';
 export default function generate(json_payload) {
 
   console.log("TYPE"+ typeof(JSON.stringify(json_payload)));
-  
-  let json_payload = JSON.stringify(json_payload)
-  const json_message = (json_payload === undefined || json_payload === "") ? jsonfile.readFileSync("Schema-Files/pizza-order.json") : json_payload;
+
+  let json_payload_str = JSON.stringify(json_payload)
+  const json_message = (json_payload_str === undefined || json_payload_str === "") ? jsonfile.readFileSync("Schema-Files/pizza-order.json") : json_payload_str;
   
   // const json_message =  jsonfile.readFileSync("Schema-Files/pizza-order.json");
   
