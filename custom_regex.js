@@ -69,7 +69,7 @@ regex_types.float_1_10 = {
  }
 
  regex_types.double_100000000 = {
-    "type":"float",
+    "type":"double",
     "arg.properties":{
        "range":{
           "min":2000000000000.1000,
