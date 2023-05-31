@@ -77,4 +77,14 @@ regex_types.float_1_10 = {
        }
     }
  }
+
+ regex_types.array_min_max =  {
+    "length": {
+        "min": 1,
+        "max": 5
+    }
+}
+
+
+
 export default regex_types;

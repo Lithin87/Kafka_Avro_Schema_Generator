@@ -9,7 +9,9 @@ export default function generate(json_payload) {
   }
 
   let custom_schema = avsc.Type.forValue(json_payload).schema(); 
- 
+  
+ console.dir(custom_schema, { depth : null})
+
   const func_replace = e => {
 
     switch (e.type) {
@@ -33,6 +35,7 @@ export default function generate(json_payload) {
           let b = JSON.parse(JSON.stringify(e.type.items.fields))    //  nexted fields
           b.forEach(func_replace);
           e.type.items.fields = b;
+          e.type.arg.properties =  regex_types.array_min_max;
         }
     }
   }

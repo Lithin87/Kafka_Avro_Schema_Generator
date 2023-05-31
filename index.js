@@ -11,7 +11,7 @@ app.post('/', (req, res) => {   res.send(generate(req.body));   });
 
 
 const port = parseInt(process.env.PORT) || 8080;
-app.listen(port);
+app.listen(port , ()=> console.log("Listening on the port : "+port));
 
 
 // console.dir(generate(), { depth : null});
